@@ -407,12 +407,16 @@ class SelectableGroup extends Component {
     if (isClick && isNodeInRoot(e.target, this.rootNode)) {
       this.handleClick(e, scaledTop, scaledLeft)
     } else {
+      const itemsToAddToSelected = new Set()
       for (const item of this.selectingItems.values()) {
         if (!this.inWhiteList(item.node)) {
           item.setState({ selected: true, selecting: false })
+          itemsToAddToSelected.add(item)
+        } else {
+          item.setState({ selected: false, selecting: false })
         }
       }
-      this.selectedItems = new Set([...this.selectedItems, ...this.selectingItems])
+      this.selectedItems = new Set([...this.selectedItems, ...itemsToAddToSelected])
       this.selectingItems.clear()
 
       if (e.which === 1 && this.mouseDownData.target === e.target) {
