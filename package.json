@@ -60,7 +60,8 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0"
+    "babel-polyfill": "^6.23.0",
+    "core-js": "^2.5.0"
   },
   "files": [
     "lib",
