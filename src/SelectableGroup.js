@@ -5,7 +5,7 @@ import getBoundsForNode from './getBoundsForNode'
 import doObjectsCollide from './doObjectsCollide'
 import Selectbox from './Selectbox'
 
-const noop = () => {}
+const noop = () => { }
 
 class SelectableGroup extends Component {
   static propTypes = {
@@ -21,6 +21,7 @@ class SelectableGroup extends Component {
     enableDeselect: bool,
     mixedDeselect: bool,
     resetOnStart: bool,
+    disabled: bool,
     /**
      * Scroll container selector
      */
@@ -71,6 +72,7 @@ class SelectableGroup extends Component {
     allowClickWithoutSelected: true,
     selectionModeClass: 'in-selection-mode',
     resetOnStart: false,
+    disabled: false,
   }
 
   static childContextTypes = {
@@ -391,7 +393,7 @@ class SelectableGroup extends Component {
   }
 
   mouseDown = e => {
-    if (this.mouseDownStarted) return
+    if (this.mouseDownStarted || this.props.disabled) return
     if (this.props.resetOnStart) {
       this.clearSelection()
     }

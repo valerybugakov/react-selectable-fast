@@ -5,6 +5,7 @@ class Selectbox extends Component {
   static propTypes = {
     fixedPosition: bool,
     className: string,
+    disabled: bool,
   }
 
   static defaultProps = {
@@ -34,7 +35,13 @@ class Selectbox extends Component {
       cursor: 'default',
     }
 
+    const disabled = this.props.disabled
+
+    if (disabled) {
+      return null
+    }
     return (
+
       <div>
         {
           this.state.isBoxSelecting &&
