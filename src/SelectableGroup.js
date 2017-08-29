@@ -412,9 +412,7 @@ class SelectableGroup extends Component {
 
   mouseDown = e => {
     if (this.mouseDownStarted || this.props.disabled) return
-    if (this.props.resetOnStart) {
-      this.clearSelection()
-    }
+
     this.mouseDownStarted = true
     this.mouseUpStarted = false
     e = this.desktopEventCoords(e)
@@ -423,6 +421,10 @@ class SelectableGroup extends Component {
     if (this.inIgnoreStartList(e.target)) {
       this.mouseDownStarted = false
       return
+    }
+
+    if (this.props.resetOnStart) {
+      this.clearSelection()
     }
 
     this.updateWhiteListNodes()
