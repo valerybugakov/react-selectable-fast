@@ -11,6 +11,7 @@ class SelectableGroup extends Component {
   static propTypes = {
     globalMouse: bool,
     ignoreList: array,
+    ignoreStartList: array,
     scrollSpeed: number,
     minimumSpeedFactor: number,
     allowClickWithoutSelected: bool,
@@ -77,6 +78,7 @@ class SelectableGroup extends Component {
     disabled: false,
     deselectOnEsc: true,
     delta: 1,
+    ignoreStartList: [],
   }
 
   static childContextTypes = {
@@ -96,6 +98,8 @@ class SelectableGroup extends Component {
     this.selectedItems = new Set()
     this.selectingItems = new Set()
     this.ignoreCheckCache = new Map()
+    this.ignoreStartCheckCache = new Map()
+    this.ignoreStartList = this.props.ignoreStartList
     this.ignoreList = this.props.ignoreList.concat([
       '.selectable-select-all',
       '.selectable-deselect-all',
@@ -367,18 +371,45 @@ class SelectableGroup extends Component {
     return shouldBeIgnored
   }
 
+  inIgnoreStartList(target) {
+    if (this.ignoreStartCheckCache.get(target) !== undefined) {
+      return this.ignoreStartCheckCache.get(target)
+    }
+
+    const shouldBeIgnored = this.ignoreStartListNodes.some(
+      ignoredNode => target === ignoredNode || ignoredNode.contains(target),
+    )
+    this.ignoreStartCheckCache.set(target, shouldBeIgnored)
+
+    return shouldBeIgnored
+  }
+
   updateWhiteListNodes() {
     this.ignoreListNodes = [...document.querySelectorAll(this.ignoreList.join(', '))]
   }
 
+  updateStartWhiteListNodes() {
+    this.ignoreStartListNodes = [
+      ...document.querySelectorAll(this.ignoreStartList.join(', ')),
+    ]
+  }
+
   mouseDown = e => {
     if (this.mouseDownStarted || this.props.disabled) return
-    if (this.props.resetOnStart) {
-      this.clearSelection()
-    }
+
     this.mouseDownStarted = true
     this.mouseUpStarted = false
     e = this.desktopEventCoords(e)
+
+    this.updateStartWhiteListNodes()
+    if (this.inIgnoreStartList(e.target)) {
+      this.mouseDownStarted = false
+      return
+    }
+
+    if (this.props.resetOnStart) {
+      this.clearSelection()
+    }
 
     this.updateWhiteListNodes()
     if (this.inIgnoreList(e.target)) {
