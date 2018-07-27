@@ -59,6 +59,15 @@ class SelectableGroup extends Component {
      * @type boolean
      */
     fixedPosition: bool,
+    /**
+     * Boolean indicating whether or not the selector should be contained within the
+     * `scrollContainer`. If specified a `selectablesContainer` prop _must_ be supplied.
+     */
+    contain: bool,
+    /**
+     * List container selector
+     */
+    selectablesContainer: string,
   }
 
   static defaultProps = {
@@ -77,6 +86,8 @@ class SelectableGroup extends Component {
     disabled: false,
     deselectOnEsc: true,
     delta: 1,
+    contain: false,
+    selectablesContainer: undefined,
   }
 
   static childContextTypes = {
@@ -91,6 +102,7 @@ class SelectableGroup extends Component {
     this.mouseMoveStarted = false
     this.mouseUpStarted = false
     this.mouseDownData = null
+    this.selectablesContainerData = null
 
     this.registry = new Set()
     this.selectedItems = new Set()
@@ -117,6 +129,37 @@ class SelectableGroup extends Component {
   componentDidMount() {
     this.rootNode = this.selectableGroup
     this.scrollContainer = document.querySelector(this.props.scrollContainer) || this.rootNode
+    this.selectablesContainer = document.querySelector(this.props.selectablesContainer)
+    if (this.props.contain && !this.selectablesContainer) {
+      throw new Error('Prop "selectablesContainer" must be a valid query selector and exist if "contain" is used!')
+    }
+    if (this.props.contain) {
+      // Figure out offset between `selectablesContainer` and `scrollContainer` (if any)
+      let selectablesContainerOffsetXRelativeToScrollContainer = 0
+      let selectablesContainerOffsetYRelativeToScrollContainer = 0
+      let childNode = this.selectablesContainer
+      let parentNode = null
+      do {
+        // eslint-disable-next-line
+        parentNode = childNode.parentNode
+        const {
+          left: childOffsetLeft,
+          top: childOffsetTop,
+        } = childNode.getBoundingClientRect()
+        const {
+          left: parentOffsetLeft,
+          top: parentOffsetTop,
+        } = parentNode.getBoundingClientRect()
+        selectablesContainerOffsetXRelativeToScrollContainer += childOffsetLeft - parentOffsetLeft
+        selectablesContainerOffsetYRelativeToScrollContainer += childOffsetTop - parentOffsetTop
+        childNode = parentNode
+      } while (!this.scrollContainer.isEqualNode(parentNode))
+      this.selectablesContainerData = {
+        selectablesContainerOffsetXRelativeToScrollContainer,
+        selectablesContainerOffsetYRelativeToScrollContainer,
+      }
+    }
+
     this.rootNode.addEventListener('mousedown', this.mouseDown)
     this.rootNode.addEventListener('touchstart', this.mouseDown)
 
@@ -145,7 +188,7 @@ class SelectableGroup extends Component {
     document.removeEventListener('touchend', this.mouseUp)
   }
 
-  setScollTop = e => {
+  setScrollTop = e => {
     const { scrollTop } = this.scrollContainer
 
     this.checkScrollTop(e, scrollTop)
@@ -170,6 +213,34 @@ class SelectableGroup extends Component {
       const newTop = currentTop + Math.max(offset, minimumSpeedFactor) * scrollSpeed
 
       this.scrollContainer.scrollTop = Math.min(newTop, this.maxScroll)
+    }
+  }
+
+  setScrollLeft = e => {
+    const { scrollLeft } = this.scrollContainer
+
+    this.checkScrollLeft(e, scrollLeft)
+    this.checkScrollRight(e, scrollLeft)
+  }
+
+  checkScrollLeft = (e, currentLeft) => {
+    const { minimumSpeedFactor, scrollSpeed } = this.props
+    const offset = this.scrollBounds.left - e.clientX
+
+    if (offset > 0 || e.clientX < 0) {
+      const newLeft = currentLeft - Math.max(offset, minimumSpeedFactor) * scrollSpeed
+      this.scrollContainer.scrollLeft = newLeft
+    }
+  }
+
+  checkScrollRight = (e, currentLeft) => {
+    const { minimumSpeedFactor, scrollSpeed } = this.props
+    const offset = e.clientX - this.scrollBounds.right
+
+    if (offset > 0 || e.clientX > window.innerHeight) {
+      const newLeft = currentLeft + Math.max(offset, minimumSpeedFactor) * scrollSpeed
+
+      this.scrollContainer.scrollLeft = Math.min(newLeft, this.maxScroll)
     }
   }
 
@@ -220,13 +291,14 @@ class SelectableGroup extends Component {
 
   openSelectbox = event => {
     const e = this.desktopEventCoords(event)
-    this.setScollTop(e)
+    this.setScrollTop(e)
+    this.setScrollLeft(e)
 
     if (this.mouseMoveStarted) return
     this.mouseMoveStarted = true
     this.mouseMoved = true
 
-    const { scrollTop } = this.scrollContainer
+    const { scrollTop, scrollLeft } = this.scrollContainer
     const eventTop = e.pageY
     const eventLeft = e.pageX
     const { documentScrollTop, documentScrollLeft } = getDocumentScroll()
@@ -236,30 +308,103 @@ class SelectableGroup extends Component {
       scrollTop - documentScrollTop
     )
 
+    const left = this.applyContainerScroll(
+      eventLeft - this.scrollBounds.left,
+      scrollLeft - documentScrollLeft
+    )
+
     let boxTop = this.applyContainerScroll(
       this.mouseDownData.boxTop - this.scrollBounds.top,
       this.mouseDownData.scrollTop - documentScrollTop
     )
 
-    const boxHeight = boxTop - top
-    boxTop = Math.min(boxTop - boxHeight, boxTop)
-
-    const bowWidth = this.mouseDownData.boxLeft - eventLeft
-    const leftContainerRelative = this.mouseDownData.boxLeft - this.scrollBounds.left
-
-    const boxLeft = this.applyContainerScroll(
-      Math.min(leftContainerRelative - bowWidth, leftContainerRelative),
-      -documentScrollLeft
+    let boxLeft = this.applyContainerScroll(
+      this.mouseDownData.boxLeft - this.scrollBounds.left,
+      this.mouseDownData.scrollLeft - documentScrollLeft
     )
 
-    this.selectbox.setState(
-      {
-        isBoxSelecting: true,
-        boxWidth: Math.abs(bowWidth),
+    const boxHeight = boxTop - top
+    boxTop = Math.min(boxTop - boxHeight, boxTop)
+    const boxWidth = boxLeft - left
+    boxLeft = Math.min(boxLeft - boxWidth, boxLeft)
+
+    let updatedSelectBoxState = {
+      isBoxSelecting: true,
+    }
+
+    if (this.props.contain) {
+      const {
+        selectablesContainerOffsetXRelativeToScrollContainer,
+        selectablesContainerOffsetYRelativeToScrollContainer,
+      } = this.selectablesContainerData
+      /**
+       * Contain Top
+       */
+      if (boxTop >= selectablesContainerOffsetYRelativeToScrollContainer) {
+        updatedSelectBoxState = { ...updatedSelectBoxState, boxTop }
+      } else {
+        // Default to maximum bound value
+        updatedSelectBoxState = {
+          ...updatedSelectBoxState,
+          boxTop: selectablesContainerOffsetYRelativeToScrollContainer,
+          boxHeight: this.mouseDownData.mouseDownRelativeY,
+        }
+      }
+      /**
+       * Contain Left
+       */
+      if (boxLeft >= selectablesContainerOffsetXRelativeToScrollContainer) {
+        updatedSelectBoxState = { ...updatedSelectBoxState, boxLeft }
+      } else {
+        // Default to minimum contained value (0)
+        updatedSelectBoxState = {
+          ...updatedSelectBoxState,
+          boxLeft: selectablesContainerOffsetXRelativeToScrollContainer,
+          boxWidth: this.mouseDownData.mouseDownRelativeX,
+        }
+      }
+
+      /**
+       * Contain Right
+       */
+      const selectablesContainerWidth = this.selectablesContainer.scrollWidth
+      const adjustedBoxLeft = boxLeft - selectablesContainerOffsetXRelativeToScrollContainer
+      if ((Math.abs(boxWidth) + adjustedBoxLeft) < selectablesContainerWidth
+        && adjustedBoxLeft > 0) {
+        updatedSelectBoxState = { ...updatedSelectBoxState, boxWidth: Math.abs(boxWidth) }
+      } else if (adjustedBoxLeft > 0) {
+        // Default to maximum contained value
+        updatedSelectBoxState = {
+          ...updatedSelectBoxState,
+          boxWidth: selectablesContainerWidth - adjustedBoxLeft,
+        }
+      }
+      /**
+       * Contain Bottom
+       */
+      const selectablesContainerHeight = this.selectablesContainer.scrollHeight
+      const adjustedBoxTop = boxTop - selectablesContainerOffsetYRelativeToScrollContainer
+      if ((Math.abs(boxHeight) + adjustedBoxTop) < selectablesContainerHeight
+        && adjustedBoxTop > 0) {
+        updatedSelectBoxState = { ...updatedSelectBoxState, boxHeight: Math.abs(boxHeight) }
+      } else if (adjustedBoxTop > 0) {
+        // Default to maximum contained value
+        updatedSelectBoxState = {
+          ...updatedSelectBoxState,
+          boxHeight: selectablesContainerHeight - adjustedBoxTop,
+        }
+      }
+    } else {
+      updatedSelectBoxState = {
+        ...updatedSelectBoxState,
+        boxWidth: Math.abs(boxWidth),
         boxHeight: Math.abs(boxHeight),
         boxLeft,
         boxTop,
-      },
+      }
+    }
+
+    this.selectbox.setState(updatedSelectBoxState,
       () => {
         this.updateSelecting()
         this.props.duringSelection([...this.selectingItems])
@@ -432,6 +577,15 @@ class SelectableGroup extends Component {
       target: e.target,
     }
 
+    if (this.props.contain) {
+      const { x, y } = this.getMousePositionRelativeToContainer(e)
+      this.mouseDownData = {
+        ...this.mouseDownData,
+        mouseDownRelativeX: x,
+        mouseDownRelativeY: y,
+      }
+    }
+
     e.preventDefault()
 
     document.addEventListener('mousemove', this.openSelectbox)
@@ -563,6 +717,20 @@ class SelectableGroup extends Component {
   getGroupRef = c => (this.selectableGroup = c)
   getSelectboxRef = c => (this.selectbox = c)
 
+  getMousePositionRelativeToContainer(mouseEvent) {
+    const {
+      left: htmlLeft,
+      top: htmlTop,
+    } = document.getElementsByTagName('html')[0].getBoundingClientRect()
+    const { left: containerLeft, top: containerTop } = this.selectablesContainer.getBoundingClientRect()
+    const containerOffsetX = containerLeft - htmlLeft
+    const containerOffsetY = containerTop - htmlTop
+    return {
+      x: (mouseEvent.clientX + window.pageXOffset) - containerOffsetX,
+      y: (mouseEvent.clientY + window.pageYOffset) - containerOffsetY,
+    }
+  }
+
   render() {
     return (
       <this.props.component
@@ -573,6 +741,7 @@ class SelectableGroup extends Component {
         }`}
       >
         <Selectbox
+          contain={this.props.contain}
           ref={this.getSelectboxRef}
           fixedPosition={this.props.fixedPosition}
           className={this.props.selectboxClassName}

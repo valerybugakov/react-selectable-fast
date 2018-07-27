@@ -42,21 +42,26 @@ class App extends Component {
         <Counters ref={this.countersRef} />
         <button onClick={this.toggleFirstRow}>Toggle first row</button>
         <button onClick={this.toggleOrder}>Toggle order</button>
-        <SelectableGroup
-          ref={ref => (window.selectableGroup = ref)}
-          className="main"
-          clickClassName="tick"
-          enableDeselect
-          tolerance={0}
-          deselectOnEsc={false}
-          allowClickWithoutSelected={false}
-          duringSelection={this.handleSelecting}
-          onSelectionClear={this.handleSelectionClear}
-          onSelectionFinish={this.handleSelectionFinish}
-          ignoreList={['.not-selectable']}
-        >
-          <List items={orderedItems} />
-        </SelectableGroup>
+        <div className="wrapper">
+          <SelectableGroup
+            contain
+            selectablesContainer=".albums"
+            scrollContainer=".wrapper"
+            ref={ref => (window.selectableGroup = ref)}
+            className="main"
+            clickClassName="tick"
+            enableDeselect
+            tolerance={0}
+            deselectOnEsc={false}
+            allowClickWithoutSelected={false}
+            duringSelection={this.handleSelecting}
+            onSelectionClear={this.handleSelectionClear}
+            onSelectionFinish={this.handleSelectionFinish}
+            ignoreList={['.not-selectable']}
+          >
+            <List items={orderedItems} />
+          </SelectableGroup>
+        </div>
       </div>
     )
   }

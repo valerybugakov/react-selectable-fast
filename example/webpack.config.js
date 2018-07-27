@@ -6,7 +6,7 @@ module.exports = {
     disableHostCheck: true,
   },
   mode: 'development',
-  devtool: 'eval',
+  devtool: 'source-map',
   entry: path.resolve(__dirname, 'example.js'),
   output: {
     path: path.resolve(__dirname),

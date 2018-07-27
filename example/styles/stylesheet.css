@@ -41,76 +41,6 @@ a:hover {
   background-color: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3); }
 
-@media screen and (min-width: 64em) {
-  .btn {
-    padding: 0.75rem 1rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .btn {
-    padding: 0.6rem 0.9rem;
-    font-size: 0.9rem; } }
-
-@media screen and (max-width: 42em) {
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 0.9rem; }
-    .btn + .btn {
-      margin-top: 1rem;
-      margin-left: 0; } }
-
-.page-header {
-  color: #fff;
-  text-align: center;
-  background-color: #159957;
-  background-image: linear-gradient(120deg, #155799, #159957); }
-
-@media screen and (min-width: 64em) {
-  .page-header {
-    padding: 5rem 6rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .page-header {
-    padding: 3rem 4rem; } }
-
-@media screen and (max-width: 42em) {
-  .page-header {
-    padding: 2rem 1rem; } }
-
-.project-name {
-  margin-top: 0;
-  margin-bottom: 0.1rem; }
-
-@media screen and (min-width: 64em) {
-  .project-name {
-    font-size: 3.25rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .project-name {
-    font-size: 2.25rem; } }
-
-@media screen and (max-width: 42em) {
-  .project-name {
-    font-size: 1.75rem; } }
-
-.project-tagline {
-  margin-bottom: 2rem;
-  font-weight: normal;
-  opacity: 0.7; }
-
-@media screen and (min-width: 64em) {
-  .project-tagline {
-    font-size: 1.25rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .project-tagline {
-    font-size: 1.15rem; } }
-
-@media screen and (max-width: 42em) {
-  .project-tagline {
-    font-size: 1rem; } }
-
 .main-content :first-child {
   margin-top: 0; }
 .main-content img {
@@ -210,56 +140,20 @@ a:hover {
   background-color: #eff0f1;
   border: 0; }
 
-@media screen and (min-width: 64em) {
-  .main-content {
-    max-width: 64rem;
-    padding: 2rem 6rem;
-    margin: 0 auto;
-    font-size: 1.1rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .main-content {
-    padding: 2rem 4rem;
-    font-size: 1.1rem; } }
-
-@media screen and (max-width: 42em) {
-  .main-content {
-    padding: 2rem 1rem;
-    font-size: 1rem; } }
-
-.site-footer {
-  padding-top: 2rem;
-  margin-top: 2rem;
-  border-top: solid 1px #eff0f1; }
-
-.site-footer-owner {
-  display: block;
-  font-weight: bold; }
-
-.site-footer-credits {
-  color: #819198; }
-
-@media screen and (min-width: 64em) {
-  .site-footer {
-    font-size: 1rem; } }
-
-@media screen and (min-width: 42em) and (max-width: 64em) {
-  .site-footer {
-    font-size: 1rem; } }
-
-@media screen and (max-width: 42em) {
-  .site-footer {
-    font-size: 0.9rem; } }
-
 /* Demo specifics */
 
-.main {
-  padding: 0 10px;
+.wrapper {
   border: 1px solid darkcyan;
-  overflow: hidden;
   height: 80vh;
   overflow: scroll;
   position: relative;
+  margin: 1em;
+}
+
+.main {
+  width: 104em;
+  font-size: 1em;
+  padding: 1em;
 }
 .selectable-selectbox {
   z-index: 9000;
@@ -269,9 +163,7 @@ a:hover {
   border: 1px dashed grey;
 }
 .albums {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  margin: 1em;
 }
 .album-label {
   display: block;
@@ -279,14 +171,15 @@ a:hover {
   font-size: smaller;
 }
 .item {
+  display: inline-block;
   position: relative;
-  width: 145px;
-  min-height: 125px;
-  margin: 2px;
-  float: left;
+  width: 9.6em;
+  height: 9.6em;
+  font-size: 1em;
+  margin: 0.2em;
   text-align: center;
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: 0.1em solid #ccc;
+  padding: 0.2em;
   overflow: hidden;
 }
 .item.not-selectable {

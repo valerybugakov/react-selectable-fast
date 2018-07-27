@@ -10,7 +10,7 @@
   "parser": "babel-eslint",
   "extends": "airbnb",
   "rules": {
-    "max-len": ["error", 100],
+    "max-len": ["error", 120],
     "semi": ["error", "never"],
     "arrow-parens": ["error", "as-needed"],
     "comma-dangle": [2, {
