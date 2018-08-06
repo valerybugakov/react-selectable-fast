@@ -23,6 +23,7 @@ class SelectableGroup extends Component {
     mixedDeselect: bool,
     deselectOnEsc: bool,
     resetOnStart: bool,
+    canStartOnSelectable: bool,
     disabled: bool,
     delta: number,
     /**
@@ -74,6 +75,7 @@ class SelectableGroup extends Component {
     allowClickWithoutSelected: true,
     selectionModeClass: 'in-selection-mode',
     resetOnStart: false,
+    canStartOnSelectable: true,
     disabled: false,
     deselectOnEsc: true,
     delta: 1,
@@ -388,6 +390,12 @@ class SelectableGroup extends Component {
 
   mouseDown = e => {
     if (this.mouseDownStarted || this.props.disabled) return
+
+    // Don't init selection on selectableElement"
+    // TODO add this to configuration props
+    if (!this.props.canStartOnSelectable && e.target != e.currentTarget) {
+      return;
+    }
 
     this.updateWhiteListNodes()
     if (this.inIgnoreList(e.target)) {
