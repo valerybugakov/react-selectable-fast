@@ -37,6 +37,12 @@ class SelectableGroup extends Component {
     duringSelection: func,
 
     /**
+     * Event that fires after items are added to selection. It provides the
+     * registry of items to allow user additions.
+     */
+    additionalSelections: func,
+
+    /**
      * Event that will fire when items are selected. Passes an array of keys.
      */
     onSelectionFinish: func,
@@ -69,6 +75,7 @@ class SelectableGroup extends Component {
     scrollSpeed: 0.25,
     minimumSpeedFactor: 60,
     duringSelection: noop,
+    additionalSelections: noop,
     onSelectionFinish: noop,
     onSelectionClear: noop,
     allowClickWithoutSelected: true,
@@ -262,6 +269,7 @@ class SelectableGroup extends Component {
       },
       () => {
         this.updateSelecting()
+
         this.props.duringSelection([...this.selectingItems])
         this.mouseMoveStarted = false
       }
@@ -289,6 +297,11 @@ class SelectableGroup extends Component {
     for (const item of this.registry.values()) {
       this.processItem(item, tolerance, selectboxBounds, click, enableDeselect, mixedDeselect)
     }
+    this.props.additionalSelections({
+      selecting: this.selectingItems,
+      selected: this.selectedItems,
+      items: this.registry.values(),
+    })
   }
 
   processItem(item, tolerance, selectboxBounds, click, enableDeselect, mixedDeselect) {

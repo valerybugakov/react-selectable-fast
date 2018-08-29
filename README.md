@@ -131,3 +131,5 @@ The `<SelectableGroup />` component accepts a few optional props:
 * `deselectOnEsc` (Boolean) Unselect all items on ESC keydown/keyup events. Default value is `true`. Using `ref` on `SelectableGroup` gives access to `ref.clearSelection()` method to unselect all items programmatically.
 * `disabled` (Boolean) Enable or disable the selectable draggable, useful if you want to enable drag of sub-items. Default value is `false`.
 * `delta` (Number) Value of the CSS transform property scaled list, useful if your list of items in `<SelectableGroup />` is wrapped by a scale css transform property. Default value is `1`.
+* `additionalSelections` (Function) Callback fired during the selection after items are added. It receives three arguments, `selecting`, `selected`, & `items`. The first two are the sets of items being selected and already selected.
+The third argument is all selectable items. This callback allows you to assign additional items to the sets as needed.
