@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { node } from 'prop-types'
+import { node, elementType } from 'prop-types'
 
 import SelectableGroupContext from './Context'
 
@@ -8,7 +8,7 @@ class SelectAllButton extends Component {
 
   static propTypes = {
     children: node,
-    component: node,
+    component: elementType,
   }
 
   static defaultProps = {

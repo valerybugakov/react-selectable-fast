@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {
-  number, bool, array, string, func, node, object,
+  number, bool, array, string, func, object, elementType,
 } from 'prop-types'
 import isNodeInRoot from './nodeInRoot'
 import getBoundsForNode, { getDocumentScroll } from './getBoundsForNode'
@@ -47,7 +47,7 @@ class SelectableGroup extends Component {
     /**
      * The component that will represent the Selectable DOM node
      */
-    component: node,
+    component: elementType,
 
     /**
      * Amount of forgiveness an item will offer to the selectbox before registering
