@@ -159,7 +159,6 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   scrollBounds: Maybe<DOMRect | ClientRect> = null
 
   componentDidMount() {
-    console.log('selectable')
     if (this.props.scrollContainer) {
       this.scrollContainer = document.querySelector(this.props.scrollContainer)
     } else {
@@ -193,7 +192,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
 
   removeTempEventListeners() {
     document.removeEventListener('mousemove', this.updateSelectBox)
-    document.removeEventListener('touchmove', this.updateSelectBox)
+    // document.removeEventListener('touchmove', this.updateSelectBox)
     document.removeEventListener('mouseup', this.mouseUp)
     document.removeEventListener('touchend', this.mouseUp)
   }
@@ -542,7 +541,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     evt.preventDefault()
 
     document.addEventListener('mousemove', this.updateSelectBox)
-    document.addEventListener('touchmove', this.updateSelectBox)
+    // document.addEventListener('touchmove', this.updateSelectBox)
     document.addEventListener('mouseup', this.mouseUp)
     document.addEventListener('touchend', this.mouseUp)
   }
