@@ -1,5 +1,5 @@
 website/bundle.js
-lib
+#lib
 dist
 build
 node_modules
