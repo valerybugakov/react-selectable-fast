@@ -1,0 +1,1 @@
+{"version":3,"file":"nodeInRoot.js","sourceRoot":"","sources":["../../src/utils/nodeInRoot.ts"],"names":[],"mappings":";;AAAA,SAAgB,YAAY,CAAC,IAAiB,EAAE,IAAiB;IAC/D,OAAO,IAAI,EAAE;QACX,IAAI,IAAI,KAAK,IAAI,EAAE;YACjB,OAAO,IAAI,CAAA;SACZ;QAED,IAAI,GAAG,IAAI,CAAC,UAAiB,CAAA;KAC9B;IAED,OAAO,KAAK,CAAA;AACd,CAAC;AAVD,oCAUC"}
