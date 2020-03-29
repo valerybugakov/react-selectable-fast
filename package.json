@@ -4,9 +4,9 @@
   "description": "Enable other React components to be selectable by drawing a box with your mouse/touch",
   "repository": {
     "type": "git",
-    "url": "git://github.com/valerybugakov/react-selectable-fast.git"
+    "url": "git://github.com/vparaskevas/react-selectable-fast.git"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf ./lib ./dist",
     "watch": "webpack --watch",
