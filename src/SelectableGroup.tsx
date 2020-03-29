@@ -159,6 +159,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   scrollBounds: Maybe<DOMRect | ClientRect> = null
 
   componentDidMount() {
+    console.log('selectable')
     if (this.props.scrollContainer) {
       this.scrollContainer = document.querySelector(this.props.scrollContainer)
     } else {
