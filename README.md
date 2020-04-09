@@ -129,7 +129,7 @@ The `<SelectableGroup />` component accepts a few optional props:
 - `mixedDeselect` (Boolean) When enabled items can be selected and deselected with selectbox at the same time, `enableDeselect` should be set to `true`.
 - `scrollContainer` (String) Selector of scroll container which will be used to calculate selectbox position. If not specified SelectableGroup element will be used as scroll container.
 - `ignoreList` (Array) Array of ignored selectors.
-- `clickableClassName` (String) On elements with specified selector click item containing this element will be selected.
+- `clickClassName` (String) On elements with specified selector click item containing this element will be selected.
 - `tolerance` (Number) The amount of buffer to add around your `<SelectableGroup />` container, in pixels.
 - `className` (String) Class of selectable group element.
 - `selectionModeClass` (String) Class indicating that there is more than 1 selected item. Defaults to 'in-selection-mode'.
