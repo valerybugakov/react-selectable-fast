@@ -472,9 +472,9 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       }
     }
 
-      this.setState({ selectionMode: true })
-      this.props.onSelectionFinish!([...this.selectedItems])
-    }
+    this.setState({ selectionMode: true })
+    this.props.onSelectionFinish!([...this.selectedItems])
+  }
 
   clearSelection = () => {
     this.deselectItemsByPredicate(() => true)
