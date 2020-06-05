@@ -458,7 +458,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         this.selectedItems.delete(item)
       }
     }
-    this.setState({ selectionMode: false })
+    this.toggleSelectionMode()
     this.props.onSelectionFinish!([...this.selectedItems])
   }
 
@@ -472,7 +472,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       }
     }
 
-    this.setState({ selectionMode: true })
+    this.toggleSelectionMode()
     this.props.onSelectionFinish!([...this.selectedItems])
   }
 
