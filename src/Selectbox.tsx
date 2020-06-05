@@ -40,6 +40,7 @@ export function Selectbox(props: TSelectboxProps) {
     cursor: 'default',
     willChange: 'transform',
     transform: 'translateZ(0)',
+    display: state.width === 0 && state.height === 0 ? 'none' : 'block',
   }
 
   return <div className={className} style={boxStyle} />
