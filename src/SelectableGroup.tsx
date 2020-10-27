@@ -54,6 +54,7 @@ export type TSelectableGroupProps = {
   resetOnStart?: boolean
   disabled?: boolean
   delta?: number
+  maxItems?: number
   allowAltClick?: boolean
   allowCtrlClick?: boolean
   allowMetaClick?: boolean
@@ -105,6 +106,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     deselectOnEsc: true,
     fixedPosition: false,
     delta: 1,
+    maxItems: 0,
     allowAltClick: false,
     allowCtrlClick: false,
     allowMetaClick: false,
@@ -255,7 +257,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
   registerSelectable = (selectableItem: TSelectableItem) => {
     this.registry.add(selectableItem)
 
-    if (selectableItem.state.isSelected) {
+    if (selectableItem.state.isSelected ) {
       this.selectedItems.add(selectableItem)
     }
   }
@@ -399,7 +401,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
   processItem(options: TProcessItemOptions) {
     const { item, tolerance, selectboxBounds, enableDeselect, mixedDeselect, isFromClick } = options
 
-    const { delta } = this.props
+    const { delta, maxItems } = this.props
     const isCollided = doObjectsCollide(selectboxBounds, item.bounds!, tolerance, delta)
     const { isSelecting, isSelected } = item.state
 
@@ -428,7 +430,16 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
       const canSelect = mixedDeselect ? !item.deselected : !this.deselectionStarted
 
-      if (!isSelecting && !isSelected && canSelect) {
+      let ignore = false;
+      if(maxItems && maxItems > 0)
+      {
+        if(maxItems <= this.selectingItems.size)
+        {
+          ignore = true;
+        }
+      }
+
+      if (!isSelecting && !isSelected && canSelect && !ignore) {
         item.setState({ isSelecting: true })
 
         this.selectionStarted = true
