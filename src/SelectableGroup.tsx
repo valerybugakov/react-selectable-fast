@@ -451,29 +451,38 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     return null
   }
 
-  clearSelection = () => {
-    for (const item of this.selectedItems.values()) {
-      item.setState({ isSelected: false })
-      this.selectedItems.delete(item)
+  deselectItemsByPredicate = (pred: (item: TSelectableItem) => boolean) => {
+    for (const item of this.registry.values()) {
+      if (item.state.isSelected && pred(item)) {
+        item.setState({ isSelected: false })
+        this.selectedItems.delete(item)
+      }
     }
-
-    this.setState({ selectionMode: false })
+    this.toggleSelectionMode()
     this.props.onSelectionFinish!([...this.selectedItems])
-    this.props.onSelectionClear!()
   }
 
-  selectAll = () => {
+  selectItemsByPredicate = (pred: (item: TSelectableItem) => boolean) => {
     this.removeIgnoredItemsFromRegistry()
 
     for (const item of this.registry.values()) {
-      if (!item.state.isSelected) {
+      if (!item.state.isSelected && pred(item)) {
         item.setState({ isSelected: true })
         this.selectedItems.add(item)
       }
     }
 
-    this.setState({ selectionMode: true })
+    this.toggleSelectionMode()
     this.props.onSelectionFinish!([...this.selectedItems])
+  }
+
+  clearSelection = () => {
+    this.deselectItemsByPredicate(() => true)
+    this.props.onSelectionClear!()
+  }
+
+  selectAll = () => {
+    this.selectItemsByPredicate(() => true)
   }
 
   isInIgnoreList(target: HTMLElement | null) {
