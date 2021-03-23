@@ -84,6 +84,7 @@ export type TSelectableGroupProps = {
    * @type boolean
    */
   fixedPosition?: boolean
+  minSelectSize?: number
 }
 
 export class SelectableGroup extends Component<TSelectableGroupProps> {
@@ -110,6 +111,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     allowMetaClick: false,
     allowShiftClick: false,
     selectOnClick: true,
+    minSelectSize: 0
   }
 
   state = { selectionMode: false }
@@ -347,7 +349,6 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       return
     }
     this.mouseMoveStarted = true
-    this.mouseMoved = true
 
     const { mouseDownData } = this
     const { clientX, clientY } = evt
@@ -376,8 +377,17 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       offsetHeight: selectboxState.height || 1,
     }
 
-    this.selectItems(selectboxBounds)
-    this.props.duringSelection!([...this.selectingItems])
+    if (
+      !this.props.minSelectSize ||
+      this.props.minSelectSize < selectboxBounds.width ||
+      this.props.minSelectSize < selectboxBounds.height  
+    )
+      {
+        this.mouseMoved = true
+        this.selectItems(selectboxBounds)
+        this.props.duringSelection!([...this.selectingItems])
+      }
+
     this.mouseMoveStarted = false
   }
 
@@ -612,14 +622,15 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         this.preventEvent(evt.target, 'click')
       }
 
-      this.setSelectboxState!({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-      })
       this.props.onSelectionFinish!([...this.selectedItems])
     }
+
+    this.setSelectboxState!({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    })
 
     this.toggleSelectionMode()
     this.cleanUp()
