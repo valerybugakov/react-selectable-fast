@@ -46,6 +46,7 @@ export type TSelectableGroupProps = {
   selectionModeClass?: string
   // Event that will fire when items are selected. Passes an array of keys.
   onSelectionFinish?: Function
+  onUnselectedFinish?: (items: TSelectableItem[]) => void
   onSelectionClear?: Function
   onSelectedItemUnmount?: Function
   enableDeselect?: boolean
@@ -166,6 +167,15 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
   documentScroll = {
     scrollTop: 0,
     scrollLeft: 0,
+  }
+
+  onUnselectedFinish() {
+    if (!this.props.onUnselectedFinish) return
+    const a = this.registry
+    const b = this.selectedItems
+    const unselected =  new Set(
+        [...a].filter(x => !b.has(x)));
+    this.props.onUnselectedFinish([...unselected])
   }
 
   componentDidMount() {
@@ -459,6 +469,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
     this.setState({ selectionMode: false })
     this.props.onSelectionFinish!([...this.selectedItems])
+    this.onUnselectedFinish()
     this.props.onSelectionClear!()
   }
 
@@ -474,6 +485,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
     this.setState({ selectionMode: true })
     this.props.onSelectionFinish!([...this.selectedItems])
+    this.onUnselectedFinish()
   }
 
   isInIgnoreList(target: HTMLElement | null) {
@@ -619,6 +631,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         height: 0,
       })
       this.props.onSelectionFinish!([...this.selectedItems])
+      this.onUnselectedFinish()
     }
 
     this.toggleSelectionMode()
@@ -695,6 +708,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       )
 
       onSelectionFinish!([...this.selectedItems], this.clickedItem)
+      this.onUnselectedFinish()
 
       if (evt.which === 1) {
         this.preventEvent(evt.target, 'click')

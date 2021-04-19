@@ -123,6 +123,7 @@ The `<SelectableGroup />` component accepts a few optional props:
 
 - `duringSelection` (Function) Callback fired rapidly during selection (while the selector is being dragged). Passes an array containing selectable items currently under the selector to the callback function.
 - `onSelectionFinish` (Function) Callback.
+- `onUnselectedFinish` (Function) Callback. Called at the same time as `onSelectionFinish`, this returns all the unselected values.
 - `onSelectionClear` (Function) Callback.
 - `onSelectedItemUnmount` (Function) Callback.
 - `enableDeselect` (Boolean) Enables deselect with selectbox.
