@@ -34,6 +34,7 @@ type TProcessItemOptions = TSelectItemsOptions & {
 }
 
 export type TSelectableGroupProps = {
+  selectingWithoutMouseMove?: boolean
   globalMouse?: boolean
   ignoreList?: string[]
   scrollSpeed?: number
@@ -564,6 +565,10 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       target: evt.target as HTMLElement,
       selectboxY: evt.clientY - this.scrollBounds!.top + this.containerScroll.scrollTop,
       selectboxX: evt.clientX - this.scrollBounds!.left + this.containerScroll.scrollLeft,
+    }
+
+    if( this.props.selectingWithoutMouseMove ) {
+      this.updateSelectBox( evt );
     }
 
     evt.preventDefault()
