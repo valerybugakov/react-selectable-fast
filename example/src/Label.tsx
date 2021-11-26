@@ -1,22 +1,18 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 type TLabelProps = {
   isSelecting: boolean
   isSelected: boolean
 }
 
-class Label extends Component<TLabelProps> {
-  render() {
-    const { isSelecting, isSelected } = this.props
+export function Label(props: TLabelProps) {
+  const { isSelecting, isSelected } = props
 
-    return (
-      <div className="card-label">
-        Selecting: <span>{`${isSelecting}`}</span>
-        <br />
-        Selected: <span>{`${isSelected}`}</span>
-      </div>
-    )
-  }
+  return (
+    <div className="card-label">
+      Selecting: <span>{`${isSelecting}`}</span>
+      <br />
+      Selected: <span>{`${isSelected}`}</span>
+    </div>
+  )
 }
-
-export default Label

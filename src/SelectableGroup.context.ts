@@ -3,14 +3,12 @@ import React from 'react'
 import { TSelectableGroupContext, TSelectableItem } from './Selectable.types'
 import { noop } from './utils'
 
-const SelectableGroupContext = React.createContext<TSelectableGroupContext>({
+export const SelectableGroupContext = React.createContext<TSelectableGroupContext>({
   selectable: {
     register(_: TSelectableItem) {},
     unregister(_: TSelectableItem) {},
     selectAll: noop,
     clearSelection: noop,
-    getScrolledContainer: () => null
-  }
+    getScrolledContainer: () => null,
+  },
 })
-
-export default SelectableGroupContext

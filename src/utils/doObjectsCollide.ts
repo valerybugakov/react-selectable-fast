@@ -1,4 +1,4 @@
-import { getBoundsForNode, TComputedBounds } from './getBoundsForNode'
+import { TComputedBounds } from './getBoundsForNode'
 
 type TAreBoundsCollideOptions = {
   tolerance?: number
@@ -43,13 +43,13 @@ function toArray(value: any) {
  * properties, determine if they collide.
  */
 export function doObjectsCollide(
-  a: HTMLElement | TComputedBounds | TComputedBounds[],
-  b: HTMLElement | TComputedBounds | TComputedBounds[],
+  a: TComputedBounds | TComputedBounds[],
+  b: TComputedBounds | TComputedBounds[],
   tolerance = 0,
   delta = 1
 ) {
-  const aBounds = a instanceof HTMLElement ? getBoundsForNode(a) : toArray(a)
-  const bBounds = b instanceof HTMLElement ? getBoundsForNode(b) : toArray(b)
+  const aBounds = toArray(a)
+  const bBounds = toArray(b)
 
   for (let i = 0; i < aBounds.length; i++) {
     for (let j = 0; j < bBounds.length; j++) {

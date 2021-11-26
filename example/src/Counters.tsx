@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 
-class Counters extends Component {
+export class Counters extends Component {
   state = {
     selectedItems: [],
-    selectingItems: []
+    selectingItems: [],
   }
 
   handleSelecting = selectingItems => {
@@ -15,7 +15,7 @@ class Counters extends Component {
   handleSelectionFinish = selectedItems => {
     this.setState({
       selectedItems,
-      selectingItems: []
+      selectingItems: [],
     })
 
     console.log(`Finished selection ${selectedItems.length}`)
@@ -34,5 +34,3 @@ class Counters extends Component {
     )
   }
 }
-
-export default Counters

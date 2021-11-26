@@ -1,40 +1,32 @@
-import React, { Component } from 'react'
+import React, { memo } from 'react'
 
 import { TAlbumItem } from './sample-data'
 import { DeselectAll, SelectAll } from '../../src'
-import SelectableCard from './Card'
+import { Card } from './Card'
 
 type TListProps = {
   items: TAlbumItem[]
 }
 
-class List extends Component<TListProps> {
-  shouldComponentUpdate(nextProps: TListProps) {
-    return nextProps.items !== this.props.items
-  }
+export const List = memo((props: TListProps) => {
+  const { items } = props
 
-  render() {
-    const { items } = this.props
-
-    return (
-      <div>
-        <p className="not-selectable">Press ESC to clear selection</p>
-        <div className="button-container">
-          <SelectAll component="button" type="button" className="btn">
-            Select all
-          </SelectAll>
-          <DeselectAll component="button" type="button" className="btn">
-            Clear selection
-          </DeselectAll>
-        </div>
-        <div className="albums">
-          {items.map(item => (
-            <SelectableCard key={item.year} player={item.player} year={item.year} />
-          ))}
-        </div>
+  return (
+    <div>
+      <p className="not-selectable">Press ESC to clear selection</p>
+      <div className="button-container">
+        <SelectAll component="button" type="button" className="btn">
+          Select all
+        </SelectAll>
+        <DeselectAll component="button" type="button" className="btn">
+          Clear selection
+        </DeselectAll>
       </div>
-    )
-  }
-}
-
-export default List
+      <div className="albums">
+        {items.map(item => (
+          <Card key={item.year} player={item.player} year={item.year} />
+        ))}
+      </div>
+    </div>
+  )
+})

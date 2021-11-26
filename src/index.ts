@@ -1,7 +1,7 @@
-import SelectableGroup from './SelectableGroup'
-import createSelectable from './CreateSelectable'
-import SelectAll from './SelectAll'
-import DeselectAll from './DeselectAll'
+import { SelectableGroup } from './SelectableGroup'
+import { createSelectable } from './CreateSelectable'
+import { SelectAll } from './SelectAll'
+import { DeselectAll } from './DeselectAll'
 import { TSelectableItemProps } from './Selectable.types'
 
 // As early as possible, check for the existence of the JavaScript globals which

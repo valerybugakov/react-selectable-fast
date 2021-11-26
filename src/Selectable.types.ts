@@ -1,5 +1,3 @@
-import { Component } from 'react'
-
 import { Maybe, TComputedBounds, TGetBoundsForNodeArgs } from './utils'
 
 type TSelectableContext = {
@@ -19,11 +17,13 @@ export type TSelectableItemState = {
   isSelecting: boolean
 }
 
-export type TSelectableItem = Component & {
+export type TSelectableItem = {
+  updateBounds(containerScroll?: TGetBoundsForNodeArgs): void
   registerSelectable(containerScroll?: TGetBoundsForNodeArgs): void
+  setState(state: any): void
   state: TSelectableItemState
   deselected: boolean
-  node: Maybe<HTMLDivElement>
+  node: Maybe<HTMLElement>
   bounds: Maybe<TComputedBounds[]>
 }
 

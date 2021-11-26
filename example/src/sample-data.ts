@@ -29,7 +29,7 @@ const players = [
   'Gary Payton',
   'Ray Allen',
   'Dwight Howard',
-  'Chris Paul'
+  'Chris Paul',
 ]
 
 export type TAlbumItem = {
@@ -39,5 +39,5 @@ export type TAlbumItem = {
 
 export const items = Array.from({ length: 500 }).map((_, index) => ({
   year: index + 1,
-  player: players[index % players.length]
+  player: players[index % players.length],
 }))

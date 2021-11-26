@@ -8,28 +8,28 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'prettier',
     'prettier/react',
-    'prettier/@typescript-eslint'
+    'prettier/@typescript-eslint',
   ],
   env: {
     browser: true,
-    es6: true
+    es6: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: path.resolve(__dirname, './tsconfig.test.json'),
-    sourceType: 'module'
+    sourceType: 'module',
   },
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx']
-      }
-    }
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
   },
   ignorePatterns: ['/generated.tsx', 'node_modules/'],
   plugins: ['prettier', '@typescript-eslint'],
   rules: {
-    'prettier/prettier': 'error',
+    'prettier/prettier': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
@@ -57,8 +57,8 @@ module.exports = {
         argsIgnorePattern: '^_',
         ignoreRestSiblings: false,
         ignoreRestSiblings: true,
-        caughtErrorsIgnorePattern: '^ignore'
-      }
+        caughtErrorsIgnorePattern: '^ignore',
+      },
     ],
     'arrow-parens': ['off', 'as-needed'],
     camelcase: 'off',
@@ -94,8 +94,8 @@ module.exports = {
       {
         blankLine: 'always',
         prev: '*',
-        next: 'return'
-      }
+        next: 'return',
+      },
     ],
     'prefer-const': 'error',
     'prefer-template': 'error',
@@ -138,15 +138,15 @@ module.exports = {
           'everything-else',
           '/^on.+$/',
           '/^handle.+$/',
-          'rendering'
+          'rendering',
         ],
         groups: {
-          rendering: ['/^render.+$/', 'render']
-        }
-      }
+          rendering: ['/^render.+$/', 'render'],
+        },
+      },
     ],
 
     'jsx-a11y/anchor-is-valid': 'off',
-    'jsx-a11y/alt-text': 'off'
-  }
+    'jsx-a11y/alt-text': 'off',
+  },
 }

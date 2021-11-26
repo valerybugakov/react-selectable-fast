@@ -1,16 +1,15 @@
-import React, { Component, ReactNode } from 'react'
-import { ReactComponentLike } from 'prop-types'
+import React, { Component, FunctionComponent, ReactNode } from 'react'
 
-import SelectableGroupContext from './Context'
+import { SelectableGroupContext } from './SelectableGroup.context'
 
-type TDeselectAllButton = {
+type TDeselectAllProps = {
   children: ReactNode
-  component?: ReactComponentLike
+  component?: string | FunctionComponent
   className?: string
   [key: string]: any
 }
 
-class DeselectAllButton extends Component<TDeselectAllButton> {
+export class DeselectAll extends Component<TDeselectAllProps> {
   static contextType = SelectableGroupContext
 
   root: HTMLDivElement | null = null
@@ -24,7 +23,8 @@ class DeselectAllButton extends Component<TDeselectAllButton> {
   }
 
   render() {
-    const { component: ButtonComponent = 'div', children, className, ...rest } = this.props
+    const { component = 'div', children, className, ...rest } = this.props
+    const ButtonComponent = component as FunctionComponent<any>
 
     return (
       <ButtonComponent
@@ -38,5 +38,3 @@ class DeselectAllButton extends Component<TDeselectAllButton> {
     )
   }
 }
-
-export default DeselectAllButton

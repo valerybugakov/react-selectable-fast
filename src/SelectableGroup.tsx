@@ -1,5 +1,4 @@
-import React, { Component, MouseEvent } from 'react'
-import { ReactComponentLike } from 'prop-types'
+import React, { Component, MouseEvent, ComponentType, CSSProperties } from 'react'
 
 import {
   castTouchToMouseEvent,
@@ -9,11 +8,12 @@ import {
   isNodeInRoot,
   noop,
   Maybe,
-  TComputedBounds
+  TComputedBounds,
+  getDocumentScroll,
 } from './utils'
 import { TSelectableItem } from './Selectable.types'
-import SelectableGroupContext from './Context'
-import Selectbox from './Selectbox'
+import { SelectableGroupContext } from './SelectableGroup.context'
+import { Selectbox, TSetSelectboxState } from './Selectbox'
 
 type TSelectItemsOptions = {
   isFromClick?: boolean
@@ -42,7 +42,7 @@ export type TSelectableGroupProps = {
   className?: string
   clickClassName?: string
   selectboxClassName?: string
-  style?: object
+  style?: CSSProperties
   selectionModeClass?: string
   // Event that will fire when items are selected. Passes an array of keys.
   onSelectionFinish?: Function
@@ -69,7 +69,7 @@ export type TSelectableGroupProps = {
   duringSelection?: Function
 
   // The component that will represent the Selectable DOM node
-  component?: ReactComponentLike
+  component?: ComponentType
 
   /**
    * Amount of forgiveness an item will offer to the selectbox before registering
@@ -86,7 +86,7 @@ export type TSelectableGroupProps = {
   fixedPosition?: boolean
 }
 
-class SelectableGroup extends Component<TSelectableGroupProps> {
+export class SelectableGroup extends Component<TSelectableGroupProps> {
   static defaultProps = {
     clickClassName: '',
     tolerance: 0,
@@ -109,7 +109,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     allowCtrlClick: false,
     allowMetaClick: false,
     allowShiftClick: false,
-    selectOnClick: true
+    selectOnClick: true,
   }
 
   state = { selectionMode: false }
@@ -131,7 +131,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   mouseDownData: TMouseDownData = {
     selectboxY: 0,
     selectboxX: 0,
-    target: null
+    target: null,
   }
 
   registry = new Set<TSelectableItem>()
@@ -146,7 +146,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
 
   ignoreListNodes: HTMLElement[] = []
 
-  selectbox: Maybe<Selectbox> = null
+  setSelectboxState: Maybe<TSetSelectboxState> = null
 
   selectableGroup: Maybe<HTMLElement> = null
 
@@ -158,12 +158,25 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
 
   scrollBounds: Maybe<DOMRect | ClientRect> = null
 
+  containerScroll = {
+    scrollTop: 0,
+    scrollLeft: 0,
+  }
+
+  documentScroll = {
+    scrollTop: 0,
+    scrollLeft: 0,
+  }
+
   componentDidMount() {
     if (this.props.scrollContainer) {
       this.scrollContainer = document.querySelector(this.props.scrollContainer)
     } else {
       this.scrollContainer = this.selectableGroup
     }
+
+    this.scrollContainer!.addEventListener('scroll', this.saveContainerScroll)
+    document.addEventListener('scroll', this.saveDocumentScroll)
 
     this.selectableGroup!.addEventListener('mousedown', this.mouseDown)
     this.selectableGroup!.addEventListener('touchstart', this.mouseDown)
@@ -172,9 +185,14 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
       document.addEventListener('keydown', this.keyListener)
       document.addEventListener('keyup', this.keyListener)
     }
+
+    this.removeIgnoredItemsFromRegistry()
   }
 
   componentWillUnmount() {
+    this.scrollContainer!.removeEventListener('scroll', this.saveContainerScroll)
+    document.removeEventListener('scroll', this.saveDocumentScroll)
+
     this.selectableGroup!.removeEventListener('mousedown', this.mouseDown)
     this.selectableGroup!.removeEventListener('touchstart', this.mouseDown)
 
@@ -188,6 +206,31 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     // Prevent onSelectedItemUnmount calls
     this.selectedItems.clear()
     this.selectingItems.clear()
+  }
+
+  saveContainerScroll = () => {
+    const { scrollTop, scrollLeft } = this.scrollContainer!
+
+    this.containerScroll = {
+      scrollTop,
+      scrollLeft,
+    }
+  }
+
+  saveDocumentScroll = () => {
+    const { documentScrollLeft, documentScrollTop } = getDocumentScroll()
+
+    this.documentScroll = {
+      scrollTop: documentScrollTop,
+      scrollLeft: documentScrollLeft,
+    }
+  }
+
+  get containerDocumentScroll() {
+    return {
+      scrollTop: this.containerScroll.scrollTop + this.documentScroll.scrollTop,
+      scrollLeft: this.containerScroll.scrollLeft + this.documentScroll.scrollLeft,
+    }
   }
 
   removeTempEventListeners() {
@@ -204,18 +247,14 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   }
 
   updateRegistry = () => {
-    const containerScroll = {
-      scrollTop: this.scrollContainer!.scrollTop,
-      scrollLeft: this.scrollContainer!.scrollLeft
-    }
-
     for (const selectableItem of this.registry.values()) {
-      selectableItem.registerSelectable(containerScroll)
+      selectableItem.updateBounds(this.containerDocumentScroll)
     }
   }
 
   registerSelectable = (selectableItem: TSelectableItem) => {
     this.registry.add(selectableItem)
+
     if (selectableItem.state.isSelected) {
       this.selectedItems.add(selectableItem)
     }
@@ -231,7 +270,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     this.selectingItems.delete(selectableItem)
 
     if (isRemoved) {
-      // Notify third-party dev that component did unmount and handled item probably should be deleted
+      // Notify third-party that component did unmount and handled item probably should be deleted
       this.props.onSelectedItemUnmount!(selectableItem, [...this.selectedItems])
     }
   }
@@ -239,7 +278,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   toggleSelectionMode() {
     const {
       selectedItems,
-      state: { selectionMode }
+      state: { selectionMode },
     } = this
 
     if (selectedItems.size && !selectionMode) {
@@ -251,7 +290,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   }
 
   private updateContainerScroll = (evt: MouseEvent<HTMLElement>) => {
-    const { scrollTop, scrollLeft } = this.scrollContainer!
+    const { scrollTop, scrollLeft } = this.containerScroll
 
     this.checkScrollTop(evt.clientY, scrollTop)
     this.checkScrollBottom(evt.clientY, scrollTop)
@@ -312,50 +351,38 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
 
     const { mouseDownData } = this
     const { clientX, clientY } = evt
-    const { scrollLeft, scrollTop } = this.scrollContainer!
 
-    const pointY = clientY - this.scrollBounds!.top + scrollTop
+    const pointY = clientY - this.scrollBounds!.top + this.containerScroll.scrollTop
     const selectboxY = Math.min(pointY, mouseDownData.selectboxY)
 
-    const pointX = clientX - this.scrollBounds!.left + scrollLeft
+    const pointX = clientX - this.scrollBounds!.left + this.containerScroll.scrollLeft
     const selectboxX = Math.min(pointX, mouseDownData.selectboxX)
 
-    this.selectbox!.setState(
-      {
-        x: selectboxX,
-        y: selectboxY,
-        isSelecting: true,
-        width: Math.abs(pointX - mouseDownData.selectboxX),
-        height: Math.abs(pointY - mouseDownData.selectboxY)
-      },
-      () => {
-        this.updateSelecting()
-        this.props.duringSelection!([...this.selectingItems])
-        this.mouseMoveStarted = false
-      }
-    )
-  }
-
-  updateSelecting = () => {
-    const selectboxNode = this.selectbox!.getRef()
-    if (!selectboxNode) {
-      return
+    const selectboxState = {
+      x: selectboxX,
+      y: selectboxY,
+      width: Math.abs(pointX - mouseDownData.selectboxX),
+      height: Math.abs(pointY - mouseDownData.selectboxY),
     }
 
-    const [selectboxBounds] = getBoundsForNode(selectboxNode)
+    this.setSelectboxState!(selectboxState)
 
-    this.selectItems({
-      ...selectboxBounds,
-      offsetWidth: selectboxBounds.offsetWidth || 1,
-      offsetHeight: selectboxBounds.offsetHeight || 1
-    })
+    const selectboxBounds = {
+      top: selectboxState.y + this.scrollBounds!.top + this.documentScroll.scrollTop,
+      left: selectboxState.x + this.scrollBounds!.left + this.documentScroll.scrollLeft,
+      width: selectboxState.width,
+      height: selectboxState.height,
+      offsetWidth: selectboxState.width || 1,
+      offsetHeight: selectboxState.height || 1,
+    }
+
+    this.selectItems(selectboxBounds)
+    this.props.duringSelection!([...this.selectingItems])
+    this.mouseMoveStarted = false
   }
 
   selectItems = (selectboxBounds: TComputedBounds, options: TSelectItemsOptions = {}) => {
     const { tolerance, enableDeselect, mixedDeselect } = this.props
-
-    selectboxBounds.top += this.scrollContainer!.scrollTop
-    selectboxBounds.left += this.scrollContainer!.scrollLeft
 
     for (const item of this.registry.values()) {
       this.processItem({
@@ -364,17 +391,13 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
         tolerance: tolerance!,
         mixedDeselect: mixedDeselect!,
         enableDeselect: enableDeselect!,
-        isFromClick: options && options.isFromClick
+        isFromClick: options && options.isFromClick,
       })
     }
   }
 
   processItem(options: TProcessItemOptions) {
     const { item, tolerance, selectboxBounds, enableDeselect, mixedDeselect, isFromClick } = options
-
-    if (this.isInIgnoreList(item.node)) {
-      return null
-    }
 
     const { delta } = this.props
     const isCollided = doObjectsCollide(selectboxBounds, item.bounds!, tolerance, delta)
@@ -440,10 +463,10 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
   }
 
   selectAll = () => {
-    this.updateWhiteListNodes()
+    this.removeIgnoredItemsFromRegistry()
 
     for (const item of this.registry.values()) {
-      if (!this.isInIgnoreList(item.node) && !item.state.isSelected) {
+      if (!item.state.isSelected) {
         item.setState({ isSelected: true })
         this.selectedItems.add(item)
       }
@@ -471,8 +494,13 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     return shouldBeIgnored
   }
 
-  updateWhiteListNodes() {
+  removeIgnoredItemsFromRegistry() {
     this.ignoreListNodes = Array.from(document.querySelectorAll(this.ignoreList.join(', ')))
+
+    this.registry = new Set([...this.registry].filter(item => !this.isInIgnoreList(item.node)))
+    this.selectedItems = new Set(
+      [...this.selectedItems].filter(item => !this.isInIgnoreList(item.node))
+    )
   }
 
   mouseDown = (e: Event) => {
@@ -482,13 +510,13 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
         allowAltClick: this.props.allowAltClick,
         allowCtrlClick: this.props.allowCtrlClick,
         allowMetaClick: this.props.allowMetaClick,
-        allowShiftClick: this.props.allowShiftClick
+        allowShiftClick: this.props.allowShiftClick,
       })
     if (this.mouseDownStarted || this.props.disabled || isNotLeftButtonClick) {
       return
     }
 
-    this.updateWhiteListNodes()
+    this.removeIgnoredItemsFromRegistry()
 
     if (this.isInIgnoreList(e.target as HTMLElement)) {
       this.mouseDownStarted = false
@@ -504,15 +532,15 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     const evt = castTouchToMouseEvent(e)
 
     if (!this.props.globalMouse && !isNodeInRoot(evt.target as any, this.selectableGroup!)) {
-      const [offsetData] = getBoundsForNode(this.selectableGroup!)
+      const [bounds] = getBoundsForNode(this.selectableGroup!, this.documentScroll)
       const collides = doObjectsCollide(
         {
-          top: offsetData.top,
-          left: offsetData.left,
+          top: bounds.top,
+          left: bounds.left,
           width: 0,
           height: 0,
-          offsetHeight: offsetData.offsetHeight,
-          offsetWidth: offsetData.offsetWidth
+          offsetHeight: bounds.offsetHeight,
+          offsetWidth: bounds.offsetWidth,
         },
         {
           top: evt.pageY,
@@ -520,7 +548,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
           width: 0,
           height: 0,
           offsetWidth: 0,
-          offsetHeight: 0
+          offsetHeight: 0,
         }
       )
 
@@ -534,8 +562,8 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
 
     this.mouseDownData = {
       target: evt.target as HTMLElement,
-      selectboxY: evt.clientY - this.scrollBounds!.top + this.scrollContainer!.scrollTop,
-      selectboxX: evt.clientX - this.scrollBounds!.left + this.scrollContainer!.scrollLeft
+      selectboxY: evt.clientY - this.scrollBounds!.top + this.containerScroll.scrollTop,
+      selectboxX: evt.clientX - this.scrollBounds!.left + this.containerScroll.scrollLeft,
     }
 
     evt.preventDefault()
@@ -584,10 +612,11 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
         this.preventEvent(evt.target, 'click')
       }
 
-      this.selectbox!.setState({
-        isSelecting: false,
+      this.setSelectboxState!({
+        x: 0,
+        y: 0,
         width: 0,
-        height: 0
+        height: 0,
       })
       this.props.onSelectionFinish!([...this.selectedItems])
     }
@@ -619,13 +648,13 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
     this.selectableGroup = ref
   }
 
-  getSelectboxRef = (ref: Selectbox | null) => {
-    this.selectbox = ref
+  getSelectboxSetState = (setState: TSetSelectboxState) => {
+    this.setSelectboxState = setState
   }
 
   // eslint-disable-next-line react/sort-comp
-  defaultContainerStyle = {
-    position: 'relative'
+  defaultContainerStyle: CSSProperties = {
+    position: 'relative',
   }
 
   contextValue = {
@@ -634,8 +663,8 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
       unregister: this.unregisterSelectable,
       selectAll: this.selectAll,
       clearSelection: this.clearSelection,
-      getScrolledContainer: () => this.scrollContainer
-    }
+      getScrolledContainer: () => this.scrollContainer,
+    },
   }
 
   handleClick(evt: any, top: number, left: number) {
@@ -660,7 +689,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
           width: 0,
           height: 0,
           offsetWidth: 0,
-          offsetHeight: 0
+          offsetHeight: 0,
         },
         { isFromClick: true }
       )
@@ -685,7 +714,7 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
       selectionModeClass,
       fixedPosition,
       selectboxClassName,
-      children
+      children,
     } = this.props
 
     return (
@@ -695,16 +724,14 @@ class SelectableGroup extends Component<TSelectableGroupProps> {
           style={{ ...this.defaultContainerStyle, ...style }}
           className={`${className} ${selectionMode ? selectionModeClass : ''}`}
         >
+          {children}
           <Selectbox
-            ref={this.getSelectboxRef}
+            getSetState={this.getSelectboxSetState}
             className={selectboxClassName}
             fixedPosition={fixedPosition!}
           />
-          {children}
         </GroupComponent>
       </SelectableGroupContext.Provider>
     )
   }
 }
-
-export default SelectableGroup
