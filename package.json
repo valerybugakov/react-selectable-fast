@@ -1,6 +1,6 @@
 {
-  "name": "react-selectable-fast",
-  "version": "3.4.0",
+  "name": "react-selectable-fast2",
+  "version": "3.4.1",
   "description": "Enable other React components to be selectable by drawing a box with your mouse/touch",
   "repository": {
     "type": "git",

@@ -9,7 +9,7 @@ import {
   noop,
   Maybe,
   TComputedBounds,
-  getDocumentScroll,
+  getDocumentScroll
 } from './utils'
 import { TSelectableItem } from './Selectable.types'
 import { SelectableGroupContext } from './SelectableGroup.context'
@@ -109,7 +109,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     allowCtrlClick: false,
     allowMetaClick: false,
     allowShiftClick: false,
-    selectOnClick: true,
+    selectOnClick: true
   }
 
   state = { selectionMode: false }
@@ -131,7 +131,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
   mouseDownData: TMouseDownData = {
     selectboxY: 0,
     selectboxX: 0,
-    target: null,
+    target: null
   }
 
   registry = new Set<TSelectableItem>()
@@ -160,12 +160,12 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
   containerScroll = {
     scrollTop: 0,
-    scrollLeft: 0,
+    scrollLeft: 0
   }
 
   documentScroll = {
     scrollTop: 0,
-    scrollLeft: 0,
+    scrollLeft: 0
   }
 
   componentDidMount() {
@@ -213,7 +213,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
     this.containerScroll = {
       scrollTop,
-      scrollLeft,
+      scrollLeft
     }
   }
 
@@ -222,14 +222,14 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
     this.documentScroll = {
       scrollTop: documentScrollTop,
-      scrollLeft: documentScrollLeft,
+      scrollLeft: documentScrollLeft
     }
   }
 
   get containerDocumentScroll() {
     return {
       scrollTop: this.containerScroll.scrollTop + this.documentScroll.scrollTop,
-      scrollLeft: this.containerScroll.scrollLeft + this.documentScroll.scrollLeft,
+      scrollLeft: this.containerScroll.scrollLeft + this.documentScroll.scrollLeft
     }
   }
 
@@ -278,7 +278,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
   toggleSelectionMode() {
     const {
       selectedItems,
-      state: { selectionMode },
+      state: { selectionMode }
     } = this
 
     if (selectedItems.size && !selectionMode) {
@@ -362,7 +362,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       x: selectboxX,
       y: selectboxY,
       width: Math.abs(pointX - mouseDownData.selectboxX),
-      height: Math.abs(pointY - mouseDownData.selectboxY),
+      height: Math.abs(pointY - mouseDownData.selectboxY)
     }
 
     this.setSelectboxState!(selectboxState)
@@ -373,7 +373,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       width: selectboxState.width,
       height: selectboxState.height,
       offsetWidth: selectboxState.width || 1,
-      offsetHeight: selectboxState.height || 1,
+      offsetHeight: selectboxState.height || 1
     }
 
     this.selectItems(selectboxBounds)
@@ -391,7 +391,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         tolerance: tolerance!,
         mixedDeselect: mixedDeselect!,
         enableDeselect: enableDeselect!,
-        isFromClick: options && options.isFromClick,
+        isFromClick: options && options.isFromClick
       })
     }
   }
@@ -458,7 +458,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     }
 
     this.setState({ selectionMode: false })
-    this.props.onSelectionFinish!([...this.selectedItems])
+    this.props.onSelectionFinish!([...this.selectedItems], this.selectableGroup)
     this.props.onSelectionClear!()
   }
 
@@ -473,7 +473,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     }
 
     this.setState({ selectionMode: true })
-    this.props.onSelectionFinish!([...this.selectedItems])
+    this.props.onSelectionFinish!([...this.selectedItems], this.selectableGroup)
   }
 
   isInIgnoreList(target: HTMLElement | null) {
@@ -510,7 +510,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         allowAltClick: this.props.allowAltClick,
         allowCtrlClick: this.props.allowCtrlClick,
         allowMetaClick: this.props.allowMetaClick,
-        allowShiftClick: this.props.allowShiftClick,
+        allowShiftClick: this.props.allowShiftClick
       })
     if (this.mouseDownStarted || this.props.disabled || isNotLeftButtonClick) {
       return
@@ -540,7 +540,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
           width: 0,
           height: 0,
           offsetHeight: bounds.offsetHeight,
-          offsetWidth: bounds.offsetWidth,
+          offsetWidth: bounds.offsetWidth
         },
         {
           top: evt.pageY,
@@ -548,7 +548,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
           width: 0,
           height: 0,
           offsetWidth: 0,
-          offsetHeight: 0,
+          offsetHeight: 0
         }
       )
 
@@ -563,7 +563,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     this.mouseDownData = {
       target: evt.target as HTMLElement,
       selectboxY: evt.clientY - this.scrollBounds!.top + this.containerScroll.scrollTop,
-      selectboxX: evt.clientX - this.scrollBounds!.left + this.containerScroll.scrollLeft,
+      selectboxX: evt.clientX - this.scrollBounds!.left + this.containerScroll.scrollLeft
     }
 
     evt.preventDefault()
@@ -616,9 +616,9 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
         x: 0,
         y: 0,
         width: 0,
-        height: 0,
+        height: 0
       })
-      this.props.onSelectionFinish!([...this.selectedItems])
+      this.props.onSelectionFinish!([...this.selectedItems], this.selectableGroup)
     }
 
     this.toggleSelectionMode()
@@ -654,7 +654,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
 
   // eslint-disable-next-line react/sort-comp
   defaultContainerStyle: CSSProperties = {
-    position: 'relative',
+    position: 'relative'
   }
 
   contextValue = {
@@ -663,8 +663,8 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       unregister: this.unregisterSelectable,
       selectAll: this.selectAll,
       clearSelection: this.clearSelection,
-      getScrolledContainer: () => this.scrollContainer,
-    },
+      getScrolledContainer: () => this.scrollContainer
+    }
   }
 
   handleClick(evt: any, top: number, left: number) {
@@ -689,12 +689,12 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
           width: 0,
           height: 0,
           offsetWidth: 0,
-          offsetHeight: 0,
+          offsetHeight: 0
         },
         { isFromClick: true }
       )
 
-      onSelectionFinish!([...this.selectedItems], this.clickedItem)
+      onSelectionFinish!([...this.selectedItems], this.selectableGroup, this.clickedItem)
 
       if (evt.which === 1) {
         this.preventEvent(evt.target, 'click')
@@ -714,7 +714,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
       selectionModeClass,
       fixedPosition,
       selectboxClassName,
-      children,
+      children
     } = this.props
 
     return (
