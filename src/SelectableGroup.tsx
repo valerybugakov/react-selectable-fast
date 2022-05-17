@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent, ComponentType, CSSProperties } from 'react'
+import React, { Component, MouseEvent, ComponentType, CSSProperties, PropsWithChildren } from 'react'
 
 import {
   castTouchToMouseEvent,
@@ -33,7 +33,7 @@ type TProcessItemOptions = TSelectItemsOptions & {
   mixedDeselect: boolean
 }
 
-export type TSelectableGroupProps = {
+export type TSelectableGroupProps = PropsWithChildren<{
   selectingWithoutMouseMove?: boolean
   globalMouse?: boolean
   ignoreList?: string[]
@@ -85,7 +85,7 @@ export type TSelectableGroupProps = {
    * @type boolean
    */
   fixedPosition?: boolean
-}
+}>
 
 export class SelectableGroup extends Component<TSelectableGroupProps> {
   static defaultProps = {
