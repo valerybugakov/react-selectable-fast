@@ -1,9 +1,9 @@
 website/bundle.js
-lib
-dist
+#lib
+#dist
 build
 node_modules
 .DS_Store
 *.log
 .idea
-lib/react-selectable-fast.js
+#lib/react-selectable-fast.js
