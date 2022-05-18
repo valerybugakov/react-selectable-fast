@@ -340,7 +340,7 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     }
   }
 
-  updateSelectBox = (event: Event) => {
+  updateSelectBox = (event: any) => {
     const evt = castTouchToMouseEvent(event)
     this.updateContainerScroll(evt)
 

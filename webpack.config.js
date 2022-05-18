@@ -8,7 +8,7 @@ module.exports = {
   mode: env,
   entry: path.resolve(__dirname, 'src', 'index.ts'),
   output: {
-    path: path.resolve(__dirname, 'lib'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'react-selectable-fast.js'
   },
   module: {

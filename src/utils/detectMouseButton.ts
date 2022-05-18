@@ -32,7 +32,7 @@ export function detectMouseButton(
   }
 
   if ('which' in evt) {
-    return (evt as KeyboardEvent).which === buttonNumber
+    return (<unknown>evt as KeyboardEvent).which === buttonNumber
   }
 
   return (evt as MouseEvent).button === buttonNumber - 1

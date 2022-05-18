@@ -7,10 +7,14 @@
     "url": "git://github.com/gabsoftware/react-selectable-fast.git"
   },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "clean": "rimraf ./lib ./dist",
+    "clean": "rimraf ./dist",
     "watch": "webpack --watch",
-    "build": "webpack",
+    "build": "yarn clean && yarn build:prod && yarn transpile",
     "transpile": "tsc",
     "build:prod": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
     "prepublishOnly": "yarn lint && yarn clean && yarn build:prod && yarn transpile",
@@ -58,10 +62,6 @@
     "Vasileios Paraskevas <vparaskevas@gmail.com> (https://github.com/vparaskevas/)"
   ],
   "license": "MIT",
-  "files": [
-    "lib",
-    "dist"
-  ],
   "homepage": "https://github.com/gabsoftware/react-selectable-fast#readme",
   "directories": {
     "example": "example"
@@ -86,6 +86,7 @@
     "eslint": "8.15.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-formatter-codeframe": "^7.32.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",

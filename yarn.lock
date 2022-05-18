@@ -33,6 +33,13 @@
   dependencies:
     "@babel/highlight" "^7.16.7"
 
+"@babel/code-frame@7.12.11":
+  "integrity" "sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw=="
+  "resolved" "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.12.11.tgz"
+  "version" "7.12.11"
+  dependencies:
+    "@babel/highlight" "^7.10.4"
+
 "@babel/compat-data@^7.13.11", "@babel/compat-data@^7.17.10":
   "integrity" "sha512-GZt/TCsG70Ms19gfZO1tM4CVnXsPgEPBCpJu+Qz3L0LUDsY5nZqFZglIoPC1kIYOtNBZlrnFT+klg12vFGZXrw=="
   "resolved" "https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.17.10.tgz"
@@ -267,7 +274,7 @@
     "@babel/traverse" "^7.17.9"
     "@babel/types" "^7.17.0"
 
-"@babel/highlight@^7.16.7":
+"@babel/highlight@^7.10.4", "@babel/highlight@^7.16.7":
   "integrity" "sha512-7yykMVF3hfZY2jsHZEEgLc+3x4o1O+fYyULu11GynEUQNwB6lua+IIQn1FiJxNucd5UlyJryrwsOh8PL9Sn8Qg=="
   "resolved" "https://registry.npmjs.org/@babel/highlight/-/highlight-7.17.12.tgz"
   "version" "7.17.12"
@@ -2936,6 +2943,14 @@
   "integrity" "sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q=="
   "resolved" "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-8.5.0.tgz"
   "version" "8.5.0"
+
+"eslint-formatter-codeframe@^7.32.1":
+  "integrity" "sha512-DK/3Q3+zVKq/7PdSYiCxPrsDF8H/TRMK5n8Hziwr4IMkMy+XiKSwbpj25AdajS63I/B61Snetq4uVvX9fOLyAg=="
+  "resolved" "https://registry.npmjs.org/eslint-formatter-codeframe/-/eslint-formatter-codeframe-7.32.1.tgz"
+  "version" "7.32.1"
+  dependencies:
+    "@babel/code-frame" "7.12.11"
+    "chalk" "^4.0.0"
 
 "eslint-import-resolver-node@^0.3.6":
   "integrity" "sha512-0En0w03NRVMn9Uiyn8YRPDKvWjxCWkslUEhGNTdGx15RvPJYQ+lbOlqrlNI2vEAs4pDYK4f/HN2TbDmk5TP0iw=="
