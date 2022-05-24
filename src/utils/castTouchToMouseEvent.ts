@@ -25,7 +25,7 @@ export function castTouchToMouseEvent(evt: any): MouseEvent<HTMLElement> {
     } else if (evt.type === 'touchmove') {
       patchEventProperties(evt, 'changedTouches')
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message)
   }
 

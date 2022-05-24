@@ -19,7 +19,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '',
-    filename: 'react-selectable-fast.js',
+    filename: 'index.js',
     library: 'React-Selectable-Fast',
     libraryTarget: 'umd',
   },

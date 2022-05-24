@@ -1,6 +1,5 @@
 website/bundle.js
-lib
-dist
+#dist
 build
 node_modules
 .DS_Store

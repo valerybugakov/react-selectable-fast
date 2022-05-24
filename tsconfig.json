@@ -4,7 +4,7 @@
     "experimentalDecorators": true,
     "declaration": true,
     "jsx": "react",
-    "lib": ["dom", "es2015", "esnext"],
+    "lib": ["dom", "es2021", "esnext"],
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -16,10 +16,10 @@
     "downlevelIteration": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es5",
-    "outDir": "./lib"
+    "target": "es2021",
+    "outDir": "./dist"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "lib"],
+  "exclude": ["node_modules", "dist"],
   "typeRoots": ["types", "node_modules/@types"]
 }

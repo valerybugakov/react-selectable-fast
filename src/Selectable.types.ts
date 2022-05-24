@@ -8,16 +8,16 @@ type TSelectableContext = {
   getScrolledContainer(): Maybe<HTMLElement>
 }
 
-export type TSelectableGroupContext = {
+type TSelectableGroupContext = {
   selectable: TSelectableContext
 }
 
-export type TSelectableItemState = {
+type TSelectableItemState = {
   isSelected: boolean
   isSelecting: boolean
 }
 
-export type TSelectableItem = {
+type TSelectableItem = {
   updateBounds(containerScroll?: TGetBoundsForNodeArgs): void
   registerSelectable(containerScroll?: TGetBoundsForNodeArgs): void
   setState(state: any): void
@@ -27,6 +27,8 @@ export type TSelectableItem = {
   bounds: Maybe<TComputedBounds[]>
 }
 
-export type TSelectableItemProps = TSelectableItemState & {
+type TSelectableItemProps = TSelectableItemState & {
   selectableRef(node: HTMLElement | null): void
 }
+
+export { TSelectableGroupContext, TSelectableItemState, TSelectableItem, TSelectableItemProps }

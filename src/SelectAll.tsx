@@ -12,6 +12,8 @@ type TSelectAllProps = {
 export class SelectAll extends Component<TSelectAllProps> {
   static contextType = SelectableGroupContext
 
+  declare context: React.ContextType<typeof SelectableGroupContext>
+
   root: HTMLDivElement | null = null
 
   componentDidMount() {
