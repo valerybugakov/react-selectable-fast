@@ -684,8 +684,8 @@ export class SelectableGroup extends Component<TSelectableGroupProps> {
     ) {
       this.selectItems(
         {
-          top,
-          left,
+          top: this.containerScroll.scrollTop + top,
+          left: this.containerScroll.scrollLeft + left,
           width: 0,
           height: 0,
           offsetWidth: 0,
